@@ -1,0 +1,48 @@
+version: '2'
+
+services:
+    web1:
+        build: docker/nginx
+        restart: always
+        ports:
+            - "80:80"
+        volumes:
+            - ../www:/src/www
+        links:
+           - phpfpm1
+        networks:
+            - network-back12
+
+    phpfpm1:
+        build: docker/phpfpm
+        restart: always
+        volumes:
+            - ../www:/src/www 
+        env_file:
+            - .env
+        networks:
+            - network-back12
+
+    percona:
+        image: percona
+        volumes:
+            - ./docker/mysql/data/percona:/var/lib/mysql
+            - ./docker/mysql/dumps:/dumps
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - innodb_log_checksums=0
+        networks:
+            - network-back12
+
+    redis1:
+        image: redis
+        restart: always
+        ports:
+          - 6379:6379
+        networks:
+            - network-back12
+
+
+networks:
+    network-back12:
+        driver: bridge
