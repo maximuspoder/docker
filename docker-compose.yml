@@ -1,46 +1,58 @@
 version: '2'
 
 services:
-    web1:
+    nginx:
         build: docker/nginx
-        restart: always
+        restart: unless-stopped
         ports:
             - "80:80"
+            - "443:443"
         volumes:
             - ../www:/src/www
-        links:
-           - phpfpm1
+            - ./docker/certbot/conf:/etc/letsencrypt
+            - ./docker/certbot/www:/var/www/certbot
+        # links:
+        #    - phpfpm1
         networks:
             - network-back12
-
-    phpfpm1:
-        build: docker/phpfpm
-        restart: always
+        command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    
+    certbot:
+        image: certbot/certbot
+        restart: unless-stopped
         volumes:
-            - ../www:/src/www 
-        env_file:
-            - .env
-        networks:
-            - network-back12
+        - ./docker/certbot/conf:/etc/letsencrypt
+        - ./docker/certbot/www:/var/www/certbot
+        entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
-    percona:
-        image: percona
-        volumes:
-            - ./docker/mysql/data/percona:/var/lib/mysql
-            - ./docker/mysql/dumps:/dumps
-        environment:
-            - MYSQL_ROOT_PASSWORD=root
-            - innodb_log_checksums=0
-        networks:
-            - network-back12
+    # phpfpm1:
+    #     build: docker/phpfpm
+    #     restart: always
+    #     volumes:
+    #         - ../www:/src/www 
+    #     env_file:
+    #         - .env
+    #     networks:
+    #         - network-back12
 
-    redis1:
-        image: redis
-        restart: always
-        ports:
-          - 6379:6379
-        networks:
-            - network-back12
+    # percona:
+    #     image: percona
+    #     volumes:
+    #         - ./docker/mysql/data/percona:/var/lib/mysql
+    #         - ./docker/mysql/dumps:/dumps
+    #     environment:
+    #         - MYSQL_ROOT_PASSWORD=root
+    #         - innodb_log_checksums=0
+    #     networks:
+    #         - network-back12
+
+    # redis1:
+    #     image: redis
+    #     restart: always
+    #     ports:
+    #       - 6379:6379
+    #     networks:
+    #         - network-back12
 
 
 networks:
