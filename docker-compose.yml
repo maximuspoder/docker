@@ -11,8 +11,8 @@ services:
             - ../www:/src/www
             - ./docker/certbot/conf:/etc/letsencrypt
             - ./docker/certbot/www:/src/www/certbot
-        # links:
-        #    - phpfpm1
+        links:
+           - phpfpm1
         networks:
             - network-back12
         command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
