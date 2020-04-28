@@ -8,11 +8,11 @@ services:
             - "80:80"
             - "443:443"
         volumes:
-            #- ../www:/src/www
+            - ../www:/src/www
             - ./docker/nginx/certbot/conf:/etc/letsencrypt
             - ./docker/nginx/certbot/www:/src/www/certbot
-        #links:
-        #   - phpfpm1
+        links:
+           - phpfpm1
         networks:
             - network-back12
         command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
