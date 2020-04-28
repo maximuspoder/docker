@@ -20,6 +20,7 @@ COPY ./mage2.conf.d/* /etc/nginx/conf.d/
 RUN mkdir -p /etc/letsencrypt
 #COPY ./certbot/* /etc/letsencrypt/
 
+RUN mkdir -p /src/www/certbot
 
 RUN mkdir -p /var/www/html
 COPY ./www/* /var/www/html/
