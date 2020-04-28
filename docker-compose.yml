@@ -9,8 +9,8 @@ services:
             - "443:443"
         volumes:
             - ../www:/src/www
-            - ./docker/certbot/conf:/etc/letsencrypt
-            - ./docker/certbot/www:/src/www/certbot
+            - ./docker/nginx/certbot/conf:/etc/letsencrypt
+            - ./docker/nginx/certbot/www:/var/www/certbot
         links:
            - phpfpm1
         networks:
@@ -21,8 +21,8 @@ services:
         image: certbot/certbot
         restart: unless-stopped
         volumes:
-        - ./docker/certbot/conf:/etc/letsencrypt
-        - ./docker/certbot/www:/src/www/certbot
+            - ./docker/nginx/certbot/conf:/etc/letsencrypt
+            - ./docker/nginx/certbot/www:/var/www/certbot
         entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
     phpfpm1:
