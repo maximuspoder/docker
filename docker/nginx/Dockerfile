@@ -18,7 +18,7 @@ COPY ./mage2.conf.d/* /etc/nginx/conf.d/
 #MAGENTO 1
 #COPY ./mage1.conf.d/* /etc/nginx/conf.d/
 RUN mkdir -p /etc/letsencrypt
-COPY ./certbot/* /etc/letsencrypt/
+#COPY ./certbot/* /etc/letsencrypt/
 
 
 RUN mkdir -p /var/www/html
